@@ -4,8 +4,6 @@ import (
 	"database/sql"
 
 	"bitbucket.org/pqstudio/go-user-group/model"
-
-	. "bitbucket.org/pqstudio/go-user-group/db"
 )
 
 const (
@@ -96,8 +94,8 @@ func execUpdate(m *model.Group, stmt *sql.Stmt) error {
 	return err
 }
 
-func GetAll(limit int, offset int) ([]model.Group, error) {
-	rows, err := DB.Query(selectQuery+"ORDER BY createdAt DESC LIMIT ? OFFSET ?", limit, offset)
+func GetAll(tx *sql.Tx, limit int, offset int) ([]model.Group, error) {
+	rows, err := tx.Query(selectQuery+"ORDER BY createdAt DESC LIMIT ? OFFSET ?", limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -109,8 +107,8 @@ func GetAll(limit int, offset int) ([]model.Group, error) {
 	return rs, nil
 }
 
-func GetByUserUID(uid string, limit int, offset int) ([]model.Group, error) {
-	rows, err := DB.Query(selectQuery+"WHERE userUID = unhex(?) ORDER BY createdAt DESC LIMIT ? OFFSET ?", uid, limit, offset)
+func GetByUserUID(tx *sql.Tx, uid string, limit int, offset int) ([]model.Group, error) {
+	rows, err := tx.Query(selectQuery+"WHERE userUID = unhex(?) ORDER BY createdAt DESC LIMIT ? OFFSET ?", uid, limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -122,9 +120,9 @@ func GetByUserUID(uid string, limit int, offset int) ([]model.Group, error) {
 	return rs, nil
 }
 
-func Get(uid string) (*model.Group, error) {
+func Get(tx *sql.Tx, uid string) (*model.Group, error) {
 	r := &model.Group{}
-	row := DB.QueryRow(selectQuery+"WHERE uid = unhex(?)", uid)
+	row := tx.QueryRow(selectQuery+"WHERE uid = unhex(?)", uid)
 
 	err := scanSelectSingle(r, row)
 	if err != nil {
@@ -134,9 +132,9 @@ func Get(uid string) (*model.Group, error) {
 	return r, nil
 }
 
-func GetOneByUserUIDAndGroup(uid string, group string) (*model.Group, error) {
+func GetOneByUserUIDAndGroup(tx *sql.Tx, uid string, group string) (*model.Group, error) {
 	r := &model.Group{}
-	row := DB.QueryRow(selectQuery+"WHERE userUID = unhex(?) AND name = ?", uid, group)
+	row := tx.QueryRow(selectQuery+"WHERE userUID = unhex(?) AND name = ?", uid, group)
 
 	err := scanSelectSingle(r, row)
 	if err != nil {
@@ -146,8 +144,8 @@ func GetOneByUserUIDAndGroup(uid string, group string) (*model.Group, error) {
 	return r, nil
 }
 
-func Create(m *model.Group) error {
-	stmt, err := DB.Prepare(insertQuery)
+func Create(tx *sql.Tx, m *model.Group) error {
+	stmt, err := tx.Prepare(insertQuery)
 	if err != nil {
 		return err
 	}
@@ -158,8 +156,8 @@ func Create(m *model.Group) error {
 	return err
 }
 
-func Update(m *model.Group) error {
-	stmt, err := DB.Prepare(updateQuery + "WHERE uid=unhex(?)")
+func Update(tx *sql.Tx, m *model.Group) error {
+	stmt, err := tx.Prepare(updateQuery + "WHERE uid=unhex(?)")
 	if err != nil {
 		return err
 	}
@@ -169,8 +167,8 @@ func Update(m *model.Group) error {
 	return err
 }
 
-func Delete(uid string) error {
-	stmt, err := DB.Prepare(deleteQuery + "WHERE uid=unhex(?)")
+func Delete(tx *sql.Tx, uid string) error {
+	stmt, err := tx.Prepare(deleteQuery + "WHERE uid=unhex(?)")
 	if err != nil {
 		return err
 	}
