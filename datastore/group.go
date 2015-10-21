@@ -21,7 +21,7 @@ const (
         INSERT  ` + table + ` SET 
             uid=unhex(?),
             name=?,
-            userUID=unhex(?)
+            userUID=unhex(?),
             createdAt=?
              `
 
