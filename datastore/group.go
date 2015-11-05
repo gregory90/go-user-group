@@ -3,7 +3,7 @@ package datastore
 import (
 	"database/sql"
 
-	"bitbucket.org/pqstudio/go-user-group/model"
+	"github.com/gregory90/go-user-group/model"
 )
 
 const (

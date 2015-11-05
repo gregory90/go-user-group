@@ -4,10 +4,10 @@ import (
 	"database/sql"
 	"time"
 
-	"bitbucket.org/pqstudio/go-user-group/datastore"
-	"bitbucket.org/pqstudio/go-user-group/model"
+	"github.com/gregory90/go-user-group/datastore"
+	"github.com/gregory90/go-user-group/model"
 
-	"bitbucket.org/pqstudio/go-webutils"
+	"github.com/gregory90/go-webutils"
 )
 
 func Get(tx *sql.Tx, uid string) (*model.Group, error) {
