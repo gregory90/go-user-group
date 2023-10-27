@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	table string = "groups"
+	table string = "`groups`"
 
 	selectQuery string = `
         SELECT 
